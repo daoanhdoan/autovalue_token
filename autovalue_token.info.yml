@@ -1,0 +1,4 @@
+name: Auto Value Token
+core_version_requirement: ^9
+package: DNC - Field
+type: module

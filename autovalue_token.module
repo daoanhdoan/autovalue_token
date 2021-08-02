@@ -1,0 +1,120 @@
+<?php
+
+/**
+ * @file
+ * Token callbacks for the token module.
+ */
+
+use Drupal\Core\Link;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_token_info().
+ */
+function autovalue_token_token_info()
+{
+  // Random tokens.
+  $info['types']['auto'] = array(
+    'name' => t('Auto Value'),
+    'description' => ('Tokens related to auto data.'),
+  );
+  $info['tokens']['auto']['increment'] = array(
+    'name' => t('Increment Value for name'),
+    'dynamic' => TRUE,
+    'description' => t('Increment value use !sprintf format', array('!sprintf' => Link::fromTextAndUrl(t('sprint'), Url::fromUri('http://php.net/manual/en/function.sprintf.php'))->toString())),
+  );
+
+  return $info;
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function autovalue_token_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata)
+{
+  $replacements = array();
+  // Random tokens.
+  if ($type == 'auto') {
+    if ($prefix_tokens = \Drupal::token()->findWithPrefix($tokens, 'increment')) {
+      foreach ($prefix_tokens as $name => $original) {
+        $name = $name . ":";
+        list($name, $format) = explode(":", $name);
+        $autovalue_token = autovalue_token_load($name);
+        if (!$autovalue_token) {
+          $item = (object) array(
+            'title' => $name,
+            'name' => $name,
+            'start' => 1,
+            'value' => 1,
+            'reset_schedule' => ''
+          );
+          $increment = 1;
+          autovalue_token_save($item);
+        } else {
+          $autovalue_token->value = $autovalue_token->value + 1;
+          autovalue_token_save($autovalue_token);
+          $increment = $autovalue_token->value;
+        }
+
+        if (!empty($format)) {
+          $increment = sprintf($format, $increment);
+        }
+
+        $replacements[$original] = $increment;
+      }
+    }
+  }
+
+  if (empty($data[$type]) && ($entity_type = \Drupal::service('token.entity_mapper')->getEntityTypeForTokenType($type)) && $entity_type != $type && !empty($data[$entity_type]) && empty($options['recursive'])) {
+    $data[$type] = $data[$entity_type];
+    $options['recursive'] = TRUE;
+    $replacements += \Drupal::moduleHandler()->invokeAll('tokens', [$type, $tokens, $data, $options, $bubbleable_metadata]);
+  }
+
+  return $replacements;
+}
+
+
+/**
+ * Loads a auto fieldvalue from the database.
+ */
+function autovalue_token_load($name)
+{
+  $result = \Drupal::database()->select('autovalue_token', 'av')
+    ->fields('av')
+    ->condition('name', $name)
+    ->execute()
+    ->fetchObject();
+
+  if (!$result) {
+    return FALSE;
+  }
+
+  return (object)$result;
+}
+
+/**
+ * Updates a auto_value.
+ */
+function autovalue_token_save($item)
+{
+  $fields = array('title' => $item->title, 'name' => $item->name, 'start' => $item->start,'value' => $item->value, 'reset_schedule' => $item->reset_schedule);
+  if (autovalue_token_load($item->name)) {
+    \Drupal::database()->update('autovalue_token')->fields($fields)->condition('name', $item->name)->execute();
+  } else {
+    \Drupal::database()->insert('autovalue_token')->fields($fields)->execute();
+  }
+}
+
+/**
+ * Deletes auto_value.
+ */
+function autovalue_token_delete($name)
+{
+  if (autovalue_token_load($name)) {
+    return \Drupal::database()->delete('autovalue_token')
+      ->condition('name', $name)
+      ->execute();
+  }
+}

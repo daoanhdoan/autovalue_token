@@ -1,0 +1,25 @@
+autovalue_token.config:
+  path: 'admin/config/autovalue_token'
+  defaults:
+    _title: 'Auto Value Token'
+    _form: '\Drupal\autovalue_token\Form\AutoValueTokenListForm'
+  requirements:
+    _permission: 'administer autovalue_token'
+autovalue_token.add:
+  path: 'admin/config/autovalue_token/add'
+  defaults:
+    _title: 'Add Auto Value Token'
+    _form: '\Drupal\autovalue_token\Form\AutoValueTokenForm'
+  requirements:
+    _permission: 'administer autovalue_token'
+autovalue_token.edit:
+  path: 'admin/config/autovalue_token/{autovalue_token}/edit'
+  defaults:
+    _title: 'Edit Auto Value Token'
+    _form: '\Drupal\autovalue_token\Form\AutoValueTokenForm'
+  requirements:
+    _permission: 'administer autovalue_token'
+  options:
+    parameters:
+      autovalue_token:
+        type: 'autovalue_token'

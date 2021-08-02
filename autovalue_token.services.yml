@@ -1,0 +1,6 @@
+services:
+  autovalue_token.init:
+    class: \Drupal\autovalue_token\EventSubscriber\AutoValueTokenSubscriber
+    arguments: ['@config.factory', '@date.formatter']
+    tags:
+      - { name: event_subscriber }

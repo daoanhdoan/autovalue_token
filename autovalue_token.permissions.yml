@@ -1,0 +1,6 @@
+'administer autovalue_token':
+  title: 'Administer autovalue_token'
+  description: 'Perform administration tasks for my autovalue_token.'
+'access autovalue_token':
+  title: 'Access RedHen'
+  description: 'Access autovalue_token.'

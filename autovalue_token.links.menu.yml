@@ -1,0 +1,5 @@
+autovalue_token.config:
+  route_name: autovalue_token.config
+  title: 'Auto Value Token'
+  description: 'Configure settings for Auto value token.'
+  parent: system.admin_config

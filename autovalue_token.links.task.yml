@@ -1,0 +1,9 @@
+autovalue_token.list:
+  title: 'List'
+  route_name: autovalue_token.config
+  base_route: autovalue_token.config
+autovalue_token.add:
+  title: 'Add'
+  route_name: autovalue_token.add
+  base_route: autovalue_token.config
+
