@@ -2,7 +2,7 @@
     "name" : "daoanhdoan/autovalue_token",
     "description": "Auto Value Token",
     "type" : "drupal-custom-module",
-    "license": "GPL-2.0",
+    "license": "GPL-2.0+",
     "extra": {
         "installer-name": "autovalue_token"
     },
